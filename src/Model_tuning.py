@@ -1,4 +1,4 @@
-# Standard library imports
+﻿# Standard library imports
 from typing import List, Tuple
 
 # Third-party imports for data manipulation and numerical operations
@@ -102,10 +102,10 @@ def model_builder(hp: kt.HyperParameters) -> models.Sequential:
     # The number of neurons is selected from the range [440, 456] with a step of 4.
     # 'relu' activation ensures the non-linearity necessary for learning complex tasks.
     model.add(layers.Dense(
-        name='input_layer',
         units=hp.Int('units_in_input_layer', min_value=16, max_value=48, step=8),
         activation='relu',
-        input_shape=(10000,)  # Defining the input data shape, necessary for the first layer of the network.
+        input_shape=(10000,),  # Defining the input data shape, necessary for the first layer of the network.
+        name=f'input_layer_{hp.Int("unique_id", min_value=0, max_value=1000, step=1)}'  # Генерация уникального имени
     ))
 
     # Dynamically adding hidden layers. The number of these layers can be from 0 to 2.
@@ -192,7 +192,7 @@ def run_tuner(x_train: np.ndarray, y_train: np.ndarray, config: dict) -> models.
 
 if __name__ == '__main__':
     # Load the configuration file
-    with open('config.yaml') as f:
+    with open('../config.yaml') as f:
         config = yaml.safe_load(f)
         
     # Extract the configuration parameters
@@ -207,18 +207,18 @@ if __name__ == '__main__':
     # Load and prepare the Reuters dataset
     x_train, y_train, x_test, y_test = load_and_prepare_reuters(num_words=num_words)
     # Run the tuner to find the best model configuration
-    model = model = run_tuner(x_train, y_train, config)  # Using a part of the test data as a validation set
+    model = run_tuner(x_train, y_train, config)  # Using a part of the test data as a validation set
     model.summary()
     
     min_learning_rate = learning_rate / 1000
     # Utilizing callbacks for training improvements
     # Create an instance of our custom callback
-    overfitting_stopping = OverfittingStoppingCallback(threshold=0.05)
+    #overfitting_stopping = OverfittingStoppingCallback(threshold=0.05)
     reuters_callbacks = [
         callbacks.ReduceLROnPlateau(monitor='val_accuracy', factor=0.1, patience=10, min_lr=min_learning_rate),  # Reduces the learning rate if no improvement is seen for 10 epochs
         callbacks.EarlyStopping(monitor='val_accuracy', patience=20),  # Stops training if no improvement is seen for 20 epochs
         callbacks.ModelCheckpoint(filepath='best_model.keras', monitor='val_accuracy', save_best_only=True),  # Saves the best model
-        overfitting_stopping  # Stops training if overfitting is detected
+        #overfitting_stopping  # Stops training if overfitting is detected
     ]
 
     # Train the model with the training set, using a validation split and the specified callbacks

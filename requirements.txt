@@ -3,5 +3,5 @@ setuptools
 numpy
 PyYAML
 matplotlib
-tensorflow-gpu==2.10.0
-keras-tuner==1.4.7
+tensorflow
+keras-tuner
