@@ -105,7 +105,7 @@ def model_builder(hp: kt.HyperParameters) -> models.Sequential:
         units=hp.Int('units_in_input_layer', min_value=16, max_value=48, step=8),
         activation='relu',
         input_shape=(10000,),  # Defining the input data shape, necessary for the first layer of the network.
-        name=f'input_layer_{hp.Int("unique_id", min_value=0, max_value=1000, step=1)}'  # Генерация уникального имени
+        name=f'input_layer_{hp.Int("unique_id", min_value=0, max_value=1000, step=1)}'  # Unique name for the layer
     ))
 
     # Dynamically adding hidden layers. The number of these layers can be from 0 to 2.
